@@ -1,24 +1,26 @@
 #!/bin/bash
 # Set threads count used during GCC compilation
-THREADS_COUNT=[THREADS_COUNT]
+THREADS_COUNT=4
+
+mkdir -p build/floppy/ENV
 
 # Delete old ELF and BIN files
-find Build -iname "*.elf" -type f -delete
-find Build -iname "*.bin" -type f -delete
+find build -iname "*.elf" -type f -delete
+find build -iname "*.bin" -type f -delete
 
-find Environment -iname "*.elf" -type f -delete
-find Library -iname "*.elf" -type f -delete
-find OS -iname "*.elf" -type f -delete
+find environment -iname "*.elf" -type f -delete
+find library -iname "*.elf" -type f -delete
+find os -iname "*.elf" -type f -delete
 
 # Delete broken directory
-if [ -d "Build/Floppy/$FLOPPY_LETTER" ]; then
-	rm -Rf "Build/Floppy/$FLOPPY_LETTER";
+if [ -d "build/floppy/$FLOPPY_LETTER" ]; then
+	rm -Rf "build/floppy/$FLOPPY_LETTER";
 fi
 
 export MODE=release
 
 # Build bootloader
-cd OS/Bootloader
+cd os/bootloader
     make $1 -j $THREADS_COUNT
 
     if [ "$?" != "0" ]; then
@@ -27,7 +29,7 @@ cd OS/Bootloader
 cd ../..
 
 # Build C Library
-cd Library
+cd library
     make $1 -j $THREADS_COUNT
 
     if [ "$?" != "0" ]; then
@@ -36,7 +38,7 @@ cd Library
 cd ..
 
 # Build applications
-cd Environment
+cd environment
     for i in *;
     do
         cd $i
@@ -47,7 +49,7 @@ cd Environment
         fi
 
         if [ "$1" != "clean" ]; then
-            cp bin/$i.elf ../../Build/Floppy/ENV/`echo $i | tr a-z A-Z`.ELF
+            cp bin/$i.elf ../../build/floppy/ENV/`echo $i | tr a-z A-Z`.ELF
         fi
 
         cd ..
@@ -55,7 +57,7 @@ cd Environment
 cd ..
 
 # Build kernel
-cd OS/Kernel
+cd os/kernel
     make $1 -j $THREADS_COUNT
 
     if [ "$?" != "0" ]; then
@@ -63,28 +65,30 @@ cd OS/Kernel
     fi
 
     if [ "$1" != "clean" ]; then
-        cp bin/kernel.bin ../../Build/Floppy/KERNEL.BIN
-        cp bin/kernel.elf ../../Build/kernel.elf
+        cp bin/kernel.bin ../../build/floppy/KERNEL.BIN
+        cp bin/kernel.elf ../../build/kernel.elf
     fi
 cd ../..
 
+if [ "$1" != "clean" ]; then
+    # Upload bootloader to the floppy
+    dd if=os/bootloader/bin/bootloader.bin bs=512 of=build/floppy.img
+fi
+
 # Build floppy
 if [ "$1" != "clean" ]; then
-    # Copy bootloader and kernel to the floppy directory
-	cp /OS/Bootloader/bin/bootloader.bin $FLOPPY_LETTER
-    cd Floppy
-    cp -r . $FLOPPY_LETTER/
+	# mount floppy image and
+	cd build/floppy/
+	mkdir -p $FLOPPY_LETTER/
+	sudo mount -o loop,uid=$UID ../floppy.img $FLOPPY_LETTER/
+
+    # Copy kernel to the floppy directory
+    sudo cp -r . $FLOPPY_LETTER/
 	cd ../..
 	cd resources
-    cp -r . $FLOPPY_LETTER/
+	sudo cp -r . $FLOPPY_LETTER/
     cd ../..
 
-	# Make floppy image, mount it and copy files from floppy directory
-	cd Build/Floppy
-	mkfs.vfat -C  1440 floppy.img
-	mkdir -p $FLOPPY_LETTER
-	mount -o loop,uid=$UID -t vfat floppy.img $FLOPPY_LETTER
-
-    # Unmount floppy
-    umount $FLOPPY_LETTER
+    # Unmount floppy remove mount directory
+   	sudo umount $FLOPPY_LETTER/
 fi
