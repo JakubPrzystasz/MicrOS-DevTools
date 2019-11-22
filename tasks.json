@@ -1,0 +1,54 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Clean",
+            "type": "shell",
+            "command": "[MSYS_PATH]/msys2_shell.cmd -defterm -mingw64 -no-start -here -c 'Scripts/build.sh clean'",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "Build",
+            "type": "shell",
+            "command": "[MSYS_PATH]/msys2_shell.cmd -defterm -mingw64 -no-start -here -c 'Scripts/build.sh'",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": {
+                "base": "$gcc",
+                "fileLocation": "absolute"
+            }
+        },
+        {
+            "label": "Run QEMU",
+            "type": "shell",
+            "command": "[EXPLICIT_POWERSHELL] start -FilePath '[QEMU_PATH]' -ArgumentList '-m 640M -drive file=Build\\floppy.img,format=raw,if=floppy -soundhw pcspk'",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "dependsOn": [
+                "Build"
+            ],
+            "problemMatcher": []
+        },
+        {
+            "label": "Run QEMU with debugger",
+            "type": "shell",
+            "command": "[EXPLICIT_POWERSHELL] start -FilePath '[QEMU_PATH]' -ArgumentList '-m 640M -drive file=Build\\floppy.img,format=raw,if=floppy -S -s'",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "dependsOn": [
+                "Build"
+            ],
+            "problemMatcher": []
+        }
+    ]
+}
