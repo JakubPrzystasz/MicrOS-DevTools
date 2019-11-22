@@ -1,6 +1,7 @@
 #!/bin/bash
 # Set threads count used during GCC compilation
 THREADS_COUNT=4
+TEMP="/tmp/temp_disk_A"
 
 mkdir -p build/floppy/ENV
 
@@ -13,9 +14,7 @@ find library -iname "*.elf" -type f -delete
 find os -iname "*.elf" -type f -delete
 
 # Delete broken directory
-if [ -d "build/floppy/$FLOPPY_LETTER" ]; then
-	rm -Rf "build/floppy/$FLOPPY_LETTER";
-fi
+rm -rf $TEMP
 
 export MODE=release
 
@@ -71,24 +70,26 @@ cd os/kernel
 cd ../..
 
 if [ "$1" != "clean" ]; then
+	# Remove old floppy img
+	rm build/floppy.img
+
+	# Make and format the floppy disk
+	mkfs.msdos -C build/floppy.img 1440
+
     # Upload bootloader to the floppy
-    dd if=os/bootloader/bin/bootloader.bin bs=512 of=build/floppy.img
-fi
+    dd if=os/bootloader/bin/bootloader.bin of=build/floppy.img bs=512 conv=notrunc
 
-# Build floppy
-if [ "$1" != "clean" ]; then
-	# mount floppy image and
-	cd build/floppy/
-	mkdir -p $FLOPPY_LETTER/
-	sudo mount -o loop,uid=$UID ../floppy.img $FLOPPY_LETTER/
-
-    # Copy kernel to the floppy directory
-    sudo cp -r . $FLOPPY_LETTER/
+    # Copy kernel to the floppy
+	cd build
+	mkdir -p $TEMP
+	sudo mount -o loop,uid=$UID floppy.img $TEMP
+	cd floppy
+	cp -r . $TEMP
 	cd ../..
 	cd resources
-	sudo cp -r . $FLOPPY_LETTER/
-    cd ../..
+	cp -r . $TEMP
+    cd ..
 
-    # Unmount floppy remove mount directory
-   	sudo umount $FLOPPY_LETTER/
+	# Unmount floppy
+	sudo umount $TEMP
 fi
