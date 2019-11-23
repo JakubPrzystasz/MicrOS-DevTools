@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 THREADS_COUNT=${2:-1}
 
@@ -9,40 +9,31 @@ help() {
 	echo -e "\t./configure.sh <workspace directory> <number of threads>\n"
 }
 
-if [ "$1" = "help" ];
-then
+if [ "$1" = "help" ]; then
 	help
 	exit 1
 fi
 
-if [ ! "$1" ];
-then
+if [ ! "$1" ]; then
 	echo "Error: Please specify workspace directory"
 	help
 	exit 1
 else
 	WORKSPACE_DIR="$(readlink -f "$1")"
-	if [ ! -d "$WORKSPACE_DIR" ];
-	then
+	if [ ! -d "$WORKSPACE_DIR" ]; then
 		echo "Error: $WORKSPACE_DIR does not exist."
 	fi
 fi
 
 # Check for dependencies
-NASM="$(command -v nasm)"
-MCOPY="$(command -v mcopy)"
-
-if [ ! "$NASM" ];
-then
-	echo "Error: dependecies not met, nasm is not installed."
-	exit 1
-fi
-
-if [ ! "$MCOPY" ];
-then
-	echo "Error: dependecies not met, mcopy is not installed."
-	exit 1
-fi
+echo "Check for dependencies:"
+DEPS="nasm curl mcopy"
+for i in $DEPS; do
+	if ! command -v "$i"; then
+		echo "Error: dependecies not met, $i is not installed."
+		exit 1
+	fi
+done
 
 # Download files
 TEMP="/tmp/MicrOS_DevTools_temp"

@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 # Set threads count used during GCC compilation
 THREADS_COUNT=[THREADS_COUNT]
 WORKSPACE_DIR="$PWD"
@@ -10,8 +10,6 @@ find build -iname "*.bin" -type f -delete
 find environment -iname "*.elf" -type f -delete
 find library -iname "*.elf" -type f -delete
 find os -iname "*.elf" -type f -delete
-
-export MODE=release
 
 # Build bootloader
 cd os/bootloader || exit
