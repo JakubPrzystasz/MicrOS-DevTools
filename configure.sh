@@ -50,7 +50,7 @@ SRC="$TEMP/MicrOS-DevTools-1.0"
 CROSS="$TEMP/cross.tar.gz"
 mkdir "$TEMP"
 curl -Lk https://github.com/jaenek/MicrOS-DevTools/archive/v1.0.tar.gz | tar xzC "$TEMP"
-curl -Lk https://github.com/jaenek/MicrOS-DevTools/releases/download/v1.0/cross.tar.gz | sudo tar xzf "$CROSS" -C "/opt"
+curl -Lk https://github.com/jaenek/MicrOS-DevTools/releases/download/v1.0/cross.tar.gz | sudo tar xzC "/opt"
 
 # Replace strings
 sed -i "s/\[THREAD_COUNT\]/$THREAD_COUNT/g" "$SRC/build.sh"
