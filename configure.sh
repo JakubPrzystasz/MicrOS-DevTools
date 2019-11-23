@@ -1,12 +1,12 @@
 #!/bin/sh
 
-THREADS_COUNT=${THREADS_COUNT:-1}
+THREADS_COUNT=${2:-1}
 
 help() {
 	echo "You must specify workspace directory like so:"
 	echo -e "\t./configure.sh <workspace directory>\n"
 	echo "You can also specify the thread count to use when compiling MicrOS:"
-	echo -e "\t./configure.sh <workspace directory> THREADS_COUNT=<number of threads>\n"
+	echo -e "\t./configure.sh <workspace directory> <number of threads>\n"
 }
 
 if [ "$1" = "help" ];
