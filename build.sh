@@ -1,6 +1,6 @@
-#!/bin/bash
+#!/bin/sh
 # Set threads count used during GCC compilation
-THREADS_COUNT=[THREAD_COUNT]
+THREADS_COUNT=[THREADS_COUNT]
 WORKSPACE_DIR="$PWD"
 
 # Delete old ELF and BIN files
@@ -14,48 +14,40 @@ find os -iname "*.elf" -type f -delete
 export MODE=release
 
 # Build bootloader
-cd os/bootloader
-	make $1 -j "$THREADS_COUNT"
-
-	if [ "$?" != "0" ]; then
+cd os/bootloader || exit
+	if ! make $1 -j "$THREADS_COUNT"; then
 		exit 1
 	fi
-cd ../..
+cd ../.. || exit
 
 # Build C Library
-cd library
-	make $1 -j "$THREADS_COUNT"
-
-	if [ "$?" != "0" ]; then
+cd library || exit
+	if ! make $1 -j "$THREADS_COUNT"; then
 		exit 1
 	fi
-cd ..
+cd .. || exit
 
 # Build applications
-cd environment
+cd environment || exit
 	for i in *;
 	do
-		cd "$i"
-		make $1 -j "$THREADS_COUNT"
-
-		if [ "$?" != "0" ]; then
+		cd "$i" || exit
+		if ! make $1 -j "$THREADS_COUNT"; then
 			exit 1
 		fi
 
 		if [ "$1" != "clean" ]; then
-			mkdir -p ../build/floppy/ENV
-			cp bin/"$i".elf ../../build/floppy/ENV/`echo "$i" | tr a-z A-Z`.ELF
+			mkdir -p ../../build/floppy/ENV
+			cp "bin/$i.elf" "../../build/floppy/ENV/$(echo "$i" | tr '[:lower:]' '[:upper:]')".ELF
 		fi
 
-		cd ..
+		cd .. || exit
 	done
-cd ..
+cd .. || exit
 
 # Build kernel
-cd os/kernel
-	make $1 -j "$THREADS_COUNT"
-
-	if [ "$?" != "0" ]; then
+cd os/kernel || exit
+	if ! make $1 -j "$THREADS_COUNT"; then
 		exit 1
 	fi
 
@@ -63,15 +55,15 @@ cd os/kernel
 		cp bin/kernel.bin ../../build/floppy/KERNEL.BIN
 		cp bin/kernel.elf ../../build/kernel.elf
 	fi
-cd ../..
+cd ../.. || exit
 
 copy() {
-	cd "$1"
+	cd "$1" || exit
 	for i in *;
 	do
-		mcopy -bvi "$FLOPPY_IMG" $i ::$i
+		mcopy -bvi "$FLOPPY_IMG" "$i" ::"$i"
 	done
-	cd "$WORKSPACE_DIR"
+	cd "$WORKSPACE_DIR" || exit
 }
 
 # Create floppy
