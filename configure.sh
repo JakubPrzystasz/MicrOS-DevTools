@@ -1,29 +1,86 @@
 #!/bin/bash
 
-THREADS_COUNT=${2:-1}
-
 help() {
-	echo "You must specify workspace directory like so:"
-	echo -e "\t./configure.sh <workspace directory>\n"
-	echo "You can also specify the thread count to use when compiling MicrOS:"
-	echo -e "\t./configure.sh <workspace directory> <number of threads>\n"
+	echo "configure.sh - configure the MicrOS development envirionment"
+	echo " "
+	echo "$ configure.sh [options]"
+	echo "-h, --help             show this help"
+	echo "-w, --workspace-dir    specify workspace directory"
+	echo "-t, --threads-count    threads count to use when compiling MicrOS"
+	echo "-q, --qemu-path        specify qemu path, needed for wsl environment"
+	echo "--wsl                  indicate wsl configuration on Windows 10"
+	exit 0
 }
 
-if [ "$1" = "help" ]; then
+if test $# -eq 0; then
 	help
-	exit 1
 fi
 
-if [ ! "$1" ]; then
-	echo "Error: Please specify workspace directory"
-	help
-	exit 1
-else
-	WORKSPACE_DIR="$(readlink -f "$1")"
-	if [ ! -d "$WORKSPACE_DIR" ]; then
-		echo "Error: $WORKSPACE_DIR does not exist."
-	fi
-fi
+while test $# -gt 0; do
+	case "$1" in
+		-h|--help)
+			help
+			;;
+		-w|--workspace-dir)
+			shift
+			if test $# -gt 0; then
+				WORK_DIR="$(readlink -f "$1")"
+				if [ ! -d "$WORK_DIR" ]; then
+					echo "Error: $WORK_DIR does not exist."
+					exit 1
+				fi
+			else
+				echo "Error: Please specify a workspace directory"
+				exit 1
+			fi
+			shift
+			;;
+		-t|--threads-count)
+			shift
+			if test $# -gt 0; then
+				# check if value is an integer
+				if printf %d "$1" >/dev/null 2>&1; then
+					THREADS_COUNT=$1
+				else
+					echo "Error: Please specify integer threads count"
+					exit 1
+				fi
+			fi
+			shift
+			;;
+		-q|--qemu-path)
+			shift
+			if test $# -gt 0; then
+				QEMU_PATH="$(readlink -f "$1")"
+				if [ ! -f "$QEMU_PATH" ]; then
+					echo "Error: $QEMU_PATH does not exist."
+					exit 1
+				fi
+			else
+				echo "Error: Please specify qemu path, use windows style formatting"
+				exit 1
+			fi
+			shift
+			;;
+		--wsl)
+			if $QEMU_PATH; then
+				WSL=1
+				shift
+			else
+				echo "Error: Please specify qemu path first"
+				exit 1
+			fi
+			;;
+		*)
+			break
+			;;
+	esac
+done
+
+# Set default values if not defined
+THREADS_COUNT=${THREADS_COUNT:-1}
+QEMU_PATH=${QEMU_PATH:-"qemu-system-i386"}
+WSL=${WSL:-0}
 
 # Check for dependencies
 echo "Check for dependencies:"
@@ -39,23 +96,28 @@ done
 TEMP="/tmp/MicrOS_DevTools_temp"
 SRC="$TEMP/MicrOS-DevTools-1.0"
 mkdir "$TEMP"
-curl -Lk https://github.com/jaenek/MicrOS-DevTools/archive/v1.0.tar.gz | tar xzC "$TEMP"
+curl -Lk https://github.com/jaenek/MicrOS-DevTools/archive/v2.0.tar.gz | tar xzC "$TEMP"
 curl -Lk https://github.com/jaenek/MicrOS-DevTools/releases/download/v1.0/cross.tar.gz | sudo tar xzC "/opt"
 
 # Replace strings
 sed -i "s/\[THREADS_COUNT\]/$THREADS_COUNT/g" "$SRC/build.sh"
+sed -i "s/\[QEMU_PATH\]/$QEMU_PATH/g" "$SRC/tasks.json"
+sed -i "s/\[WORK_DIR\]/$WORK_DIR/g" "$SRC/tasks.json"
+if $WSL; then
+	sed -i "s/\[WSL\]/wsl /g" "$SRC/tasks.json"
+fi
 
 # Prepare workspace directory
-mkdir -p "$WORKSPACE_DIR/build/"
-mkdir -p "$WORKSPACE_DIR/scripts/"
-mv "$SRC/build.sh" "$WORKSPACE_DIR/scripts/"
-mkdir -p "$WORKSPACE_DIR/.vscode/"
-mv "$SRC/launch.json" "$WORKSPACE_DIR/.vscode/"
-mv "$SRC/tasks.json" "$WORKSPACE_DIR/.vscode/"
+mkdir -p "$WORK_DIR/build/"
+mkdir -p "$WORK_DIR/scripts/"
+mv "$SRC/build.sh" "$WORK_DIR/scripts/"
+mkdir -p "$WORK_DIR/.vscode/"
+mv "$SRC/launch.json" "$WORK_DIR/.vscode/"
+mv "$SRC/tasks.json" "$WORK_DIR/.vscode/"
 
 # Create symlink to nasm
-mkdir -p "$WORKSPACE_DIR/tools/"
-ln -sf "$NASM" "$WORKSPACE_DIR/tools/nasm"
+mkdir -p "$WORK_DIR/tools/"
+ln -sf "$NASM" "$WORK_DIR/tools/nasm"
 
 # Remove temporary directory
 rm -r "$TEMP"
