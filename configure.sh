@@ -51,11 +51,7 @@ while test $# -gt 0; do
 		-q|--qemu-path)
 			shift
 			if test $# -gt 0; then
-				QEMU_PATH="$(readlink -f "$1")"
-				if [ ! -f "$QEMU_PATH" ]; then
-					echo "Error: $QEMU_PATH does not exist."
-					exit 1
-				fi
+				QEMU_PATH="$1"
 			else
 				echo "Error: Please specify qemu path, use windows style formatting"
 				exit 1
@@ -63,7 +59,7 @@ while test $# -gt 0; do
 			shift
 			;;
 		--wsl)
-			if $QEMU_PATH; then
+			if test -n "$QEMU_PATH"; then
 				WSL=1
 				shift
 			else
@@ -85,8 +81,8 @@ WSL=${WSL:-0}
 # Check for dependencies
 echo "Check for dependencies:"
 DEPS="nasm curl mcopy"
-for i in $DEPS; do
-	if ! command -v "$i"; then
+for i in $(command -v "$DEPS"); do
+	if test -n "$i"; then
 		echo "Error: dependecies not met, $i is not installed."
 		exit 1
 	fi
@@ -94,17 +90,21 @@ done
 
 # Download files
 TEMP="/tmp/MicrOS_DevTools_temp"
-SRC="$TEMP/MicrOS-DevTools-1.0"
-mkdir "$TEMP"
+SRC="$TEMP/MicrOS-DevTools-2.0"
+mkdir -p "$TEMP"
 curl -Lk https://github.com/jaenek/MicrOS-DevTools/archive/v2.0.tar.gz | tar xzC "$TEMP"
 curl -Lk https://github.com/jaenek/MicrOS-DevTools/releases/download/v1.0/cross.tar.gz | sudo tar xzC "/opt"
+if test $? -eq 1; then
+	echo "Error: wrong sudo password."
+	exit 1
+fi
 
 # Replace strings
-sed -i "s/\[THREADS_COUNT\]/$THREADS_COUNT/g" "$SRC/build.sh"
-sed -i "s/\[QEMU_PATH\]/$QEMU_PATH/g" "$SRC/tasks.json"
-sed -i "s/\[WORK_DIR\]/$WORK_DIR/g" "$SRC/tasks.json"
-if $WSL; then
-	sed -i "s/\[WSL\]/wsl /g" "$SRC/tasks.json"
+sed -i "s!\[THREADS_COUNT\]!$THREADS_COUNT!g" "$SRC/build.sh"
+sed -i "s!\[QEMU_PATH\]!\"$QEMU_PATH\"!g" "$SRC/tasks.json"
+sed -i "s!\[WORK_DIR\]!$WORK_DIR!g" "$SRC/tasks.json"
+if test $WSL -eq 1; then
+	sed -i "s!\[WSL\]!wsl !g" "$SRC/tasks.json"
 fi
 
 # Prepare workspace directory
@@ -117,7 +117,7 @@ mv "$SRC/tasks.json" "$WORK_DIR/.vscode/"
 
 # Create symlink to nasm
 mkdir -p "$WORK_DIR/tools/"
-ln -sf "$NASM" "$WORK_DIR/tools/nasm"
+ln -sf "$(command -v nasm)" "$WORK_DIR/tools/nasm"
 
 # Remove temporary directory
 rm -r "$TEMP"
