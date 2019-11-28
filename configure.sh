@@ -20,9 +20,7 @@ fi
 while test $# -gt 0; do
 	case "$1" in
 		-h|--help)
-			help
-			;;
-		-w|--workspace-dir)
+			help ;; -w|--workspace-dir)
 			shift
 			if test $# -gt 0; then
 				WORK_DIR="$(readlink -f "$1")"
@@ -109,11 +107,12 @@ fi
 
 # Replace strings
 sed -i "s!\[THREADS_COUNT\]!$THREADS_COUNT!g" "$SRC/build.sh"
-sed -i "s!\[QEMU_PATH\]!$QEMU_PATH!g" "$SRC/tasks.json"
 sed -i "s!\[WORK_DIR\]!$WORK_DIR!g" "$SRC/tasks.json"
 if test $WSL -eq 1; then
+	sed -i "s!\[QEMU_PATH\][^\"]*!start -FilePath \'$QEMU_PATH\' -ArgumentList \'&\'!g;s!\[QEMU_PATH\]!!g" "$SRC/tasks.json"
 	sed -i "s!\[WSL\]!wsl !g" "$SRC/tasks.json"
 else
+	sed -i "s!\[QEMU_PATH\]!$QEMU_PATH !g" "$SRC/tasks.json"
 	sed -i "s!\[WSL\]!!g" "$SRC/tasks.json"
 fi
 
