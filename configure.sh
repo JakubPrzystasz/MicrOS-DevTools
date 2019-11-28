@@ -52,7 +52,7 @@ while test $# -gt 0; do
 		-q|--qemu-path)
 			shift
 			if test $# -gt 0; then
-				QEMU_PATH="$1"
+				QEMU_PATH="$(echo $1 | sed 's/\\/\\\\\\\\/g')"
 			else
 				echo "Error: Please specify qemu path, use windows style formatting"
 				exit 1
@@ -109,7 +109,7 @@ fi
 
 # Replace strings
 sed -i "s!\[THREADS_COUNT\]!$THREADS_COUNT!g" "$SRC/build.sh"
-sed -i "s!\[QEMU_PATH\]!\"$QEMU_PATH\"!g" "$SRC/tasks.json"
+sed -i "s!\[QEMU_PATH\]!$QEMU_PATH!g" "$SRC/tasks.json"
 sed -i "s!\[WORK_DIR\]!$WORK_DIR!g" "$SRC/tasks.json"
 if test $WSL -eq 1; then
 	sed -i "s!\[WSL\]!wsl !g" "$SRC/tasks.json"
