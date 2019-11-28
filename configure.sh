@@ -9,6 +9,7 @@ help() {
 	echo "-t, --threads-count    threads count to use when compiling MicrOS"
 	echo "-q, --qemu-path        specify qemu path, needed for wsl environment"
 	echo "--wsl                  indicate wsl configuration on Windows 10"
+	echo "-s, --skip-compiler    omit the cross compiler installation"
 	exit 0
 }
 
@@ -67,6 +68,9 @@ while test $# -gt 0; do
 				exit 1
 			fi
 			;;
+		-s|--skip-compiler)
+			SKIP_CC=1
+			;;
 		*)
 			break
 			;;
@@ -77,6 +81,7 @@ done
 THREADS_COUNT=${THREADS_COUNT:-1}
 QEMU_PATH=${QEMU_PATH:-"qemu-system-i386"}
 WSL=${WSL:-0}
+SKIP_CC=${SKIP_CC:-0}
 
 # Check for dependencies
 echo "Check for dependencies:"
@@ -93,10 +98,12 @@ TEMP="/tmp/MicrOS_DevTools_temp"
 SRC="$TEMP/MicrOS-DevTools-2.0"
 mkdir -p "$TEMP"
 curl -Lk https://github.com/jaenek/MicrOS-DevTools/archive/v2.0.tar.gz | tar xzC "$TEMP"
-curl -Lk https://github.com/jaenek/MicrOS-DevTools/releases/download/v1.0/cross.tar.gz | sudo tar xzC "/opt"
-if test $? -eq 1; then
-	echo "Error: wrong sudo password."
-	exit 1
+if test $SKIP_CC -eq 0;then
+	curl -Lk https://github.com/jaenek/MicrOS-DevTools/releases/download/v1.0/cross.tar.gz | sudo tar xzC "/opt"
+	if test $? -eq 1; then
+		echo "Error: wrong sudo password."
+		exit 1
+	fi
 fi
 
 # Replace strings
