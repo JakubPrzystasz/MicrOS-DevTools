@@ -113,6 +113,8 @@ sed -i "s!\[QEMU_PATH\]!$QEMU_PATH!g" "$SRC/tasks.json"
 sed -i "s!\[WORK_DIR\]!$WORK_DIR!g" "$SRC/tasks.json"
 if test $WSL -eq 1; then
 	sed -i "s!\[WSL\]!wsl !g" "$SRC/tasks.json"
+else
+	sed -i "s!\[WSL\]!!g" "$SRC/tasks.json"
 fi
 
 # Prepare workspace directory
