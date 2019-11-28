@@ -70,6 +70,7 @@ while test $# -gt 0; do
 			;;
 		-s|--skip-compiler)
 			SKIP_CC=1
+			shift
 			;;
 		*)
 			break
