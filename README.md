@@ -42,8 +42,8 @@ Next up is downloading and running the `configure.sh` script supplying it with f
 - `--wsl` - this is an indication to configure a Windows environment.
 ```
 $ curl -LO https://raw.githubusercontent.com/jaenek/MicrOS-DevTools/master/configure.sh
-$ sudo chmod +x configure.sh
-$ ./configure.sh -w <workspace directory> -q <qemu path> --wsl
+$ chmod +x configure.sh
+$ ./configure.sh -w <workspace directory> -t <number of threads> -q <qemu path> --wsl
 ```
 If you followed the previous instructions the last line should look like this:
 ```
