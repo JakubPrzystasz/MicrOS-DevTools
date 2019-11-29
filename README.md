@@ -16,7 +16,7 @@ Next up is downloading and running the `configure.sh` script supplying it with f
 - `-t <number of threads>` - specify a number of threads to use when compiling MicrOS (optional)
 ```
 $ curl -LO https://raw.githubusercontent.com/jaenek/MicrOS-DevTools/master/configure.sh
-$ sudo chmod +x configure.sh
+$ chmod +x configure.sh
 $ ./configure.sh -w <workspace directory>
 ```
 It will ask for sudo permission beacause it needs to install the cross complier to `/opt/` directory.
@@ -47,6 +47,6 @@ $ ./configure.sh -w <workspace directory> -q <qemu path> --wsl
 ```
 If you followed the previous instructions the last line should look like this:
 ```
-$ ./configure.sh -w ./ -q "C:\Program Files\qemu\qemu-system-i386.exe" --wsl
+$ sudo ./configure.sh -w ./ -q "C:\Program Files\qemu\qemu-system-i386.exe" --wsl
 ```
 It might ask for sudo permission beacause it needs to install the cross complier to `/opt/` directory, in that case just type the password that you set when setting up a user in WSL.
