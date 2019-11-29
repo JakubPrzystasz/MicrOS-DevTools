@@ -26,8 +26,8 @@ Start with installation of a Windows Subsystem for Linux. You can follow a guide
 
 Then open your Ubuntu WSL and install few packages using apt:
 ```
-sudo apt update && sudo apt upgrade
-sudo apt install nasm mtools build-essential
+$ sudo apt update && sudo apt upgrade
+$ sudo apt install nasm mtools build-essential
 ```
 
 Next prepare a path to your qemu directory it should look something like this `"C:\Program Files\qemu\qemu-system-i386.exe"`, also open Ubuntu WSL in the directory where you cloned the [MicrOS](https://github.com/Tearth/MicrOS) repo. Your command prompt should look something like this:
@@ -47,6 +47,6 @@ $ ./configure.sh -w <workspace directory> -q <qemu path> --wsl
 ```
 If you followed the previous instructions the last line should look like this:
 ```
-./configure.sh -w ./ -q "C:\Program Files\qemu\qemu-system-i386.exe" --wsl
+$ ./configure.sh -w ./ -q "C:\Program Files\qemu\qemu-system-i386.exe" --wsl
 ```
-It will ask for sudo permission beacause it needs to install the cross complier to `/opt/` directory. Just type the password that you set when setting up a user in WSL.
+It might ask for sudo permission beacause it needs to install the cross complier to `/opt/` directory, in that case just type the password that you set when setting up a user in WSL.
