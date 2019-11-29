@@ -16,7 +16,7 @@ Next up is downloading and running the `configure.sh` script supplying it with f
 - `-t <number of threads>` - specify a number of threads to use when compiling MicrOS (optional)
 ```
 $ curl -LO https://raw.githubusercontent.com/jaenek/MicrOS-DevTools/master/configure.sh
-$ chmod +x configure.sh
+$ sudo chmod +x configure.sh
 $ ./configure.sh -w <workspace directory>
 ```
 It will ask for sudo permission beacause it needs to install the cross complier to `/opt/` directory.
