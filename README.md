@@ -22,7 +22,7 @@ $ ./configure.sh -w <workspace directory>
 It will ask for sudo permission beacause it needs to install the cross complier to `/opt/` directory.
 
 ## WSL (Windows 10)
-Start with installation of a Windows Subsystem for Linux. You can follow a guide [here](https://docs.microsoft.com/en-us/windows/wsl/install-win10). You should install the **Ubuntu distribution**.
+Start with installation of a Windows Subsystem for Linux. You can follow a guide [here](https://docs.microsoft.com/en-us/windows/wsl/install-win10). You should install the **Ubuntu distribution**, after installation open it, make a new user and **reboot your computer**.
 
 Then open your Ubuntu WSL and install few packages using apt:
 ```
