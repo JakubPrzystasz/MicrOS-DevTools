@@ -11,6 +11,9 @@ find environment -iname "*.elf" -type f -delete
 find library -iname "*.elf" -type f -delete
 find os -iname "*.elf" -type f -delete
 
+# Set release mode to reduce binary size
+export MODE=release
+
 # Build bootloader
 cd os/bootloader || exit
 	if ! make $1 -j "$THREADS_COUNT"; then
