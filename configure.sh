@@ -15,12 +15,16 @@ help() {
 
 if test $# -eq 0; then
 	help
+	exit 1
 fi
 
 while test $# -gt 0; do
 	case "$1" in
 		-h|--help)
-			help ;; -w|--workspace-dir)
+			help
+			exit 1
+			;;
+		-w|--workspace-dir)
 			shift
 			if test $# -gt 0; then
 				WORK_DIR="$(readlink -f "$1")"
@@ -50,7 +54,8 @@ while test $# -gt 0; do
 		-q|--qemu-path)
 			shift
 			if test $# -gt 0; then
-				QEMU_PATH="$(echo $1 | sed 's/\\/\\\\\\\\/g')"
+				# Replace backslash with 4 backslashes
+				QEMU_PATH="${1//\\/\\\\\\\\}"
 			else
 				echo "Error: Please specify qemu path, use windows style formatting"
 				exit 1
@@ -76,6 +81,11 @@ while test $# -gt 0; do
 	esac
 done
 
+if test -z "$WORK_DIR"; then
+	echo "Error: Please specify workspace directory."
+	exit 1
+fi
+
 # Set default values if not defined
 THREADS_COUNT=${THREADS_COUNT:-1}
 QEMU_PATH=${QEMU_PATH:-"qemu-system-i386"}
@@ -83,7 +93,6 @@ WSL=${WSL:-0}
 SKIP_CC=${SKIP_CC:-0}
 
 # Check for dependencies
-echo "Check for dependencies:"
 DEPS="nasm curl mcopy"
 for i in $(command -v "$DEPS"); do
 	if test -n "$i"; then
