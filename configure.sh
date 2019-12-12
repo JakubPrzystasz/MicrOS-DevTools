@@ -93,7 +93,7 @@ WSL=${WSL:-0}
 SKIP_CC=${SKIP_CC:-0}
 
 # Check for dependencies
-DEPS="nasm curl mcopy"
+DEPS="nasm curl mcopy make"
 for i in $(command -v "$DEPS"); do
 	if test -n "$i"; then
 		echo "Error: dependecies not met, $i is not installed."
