@@ -8,8 +8,14 @@ First of all you will need to install few packages using your package manager.
 You will need:
 - nasm
 - mtools
-- curl (should be already installed, but check to be sure)
-- build-essential (this varies from distribution to distribution, contains tools like make and necessary libraries)
+- make
+- curl
+- other:
+
+| Debian / Ubuntu Linux | Arch Linux |
+|-----------------------|------------|
+| libfl2                | flex       |
+| libmpc3               | libmpc     |
 
 Next up is downloading and running the `configure.sh` script supplying it with flags and arguments:
 - `-w <workspace directory>` - directory where you cloned the [MicrOS](https://github.com/Tearth/MicrOS) repo,
@@ -27,7 +33,7 @@ Start with installation of a Windows Subsystem for Linux. You can follow a guide
 Then open your Ubuntu WSL and install few packages using apt:
 ```
 $ sudo apt update && sudo apt upgrade
-$ sudo apt install nasm mtools build-essential
+$ sudo apt install nasm mtools make libfl2 libmpc3
 ```
 
 Next prepare a path to your qemu directory it should look something like this `"C:\Program Files\qemu\qemu-system-i386.exe"`, also open Ubuntu WSL in the directory where you cloned the [MicrOS](https://github.com/Tearth/MicrOS) repo. Your command prompt should look something like this:
