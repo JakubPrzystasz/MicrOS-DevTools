@@ -105,9 +105,9 @@ done
 TEMP="/tmp/MicrOS_DevTools_temp"
 SRC="$TEMP/MicrOS-DevTools-2.0"
 mkdir -p "$TEMP"
-curl -Lk https://github.com/jaenek/MicrOS-DevTools/archive/v2.0.tar.gz | tar xzC "$TEMP"
+curl -Lks https://github.com/jaenek/MicrOS-DevTools/archive/v2.0.tar.gz | tar xzC "$TEMP"
 if test $SKIP_CC -eq 0;then
-	curl -Lk https://github.com/jaenek/MicrOS-DevTools/releases/download/v1.0/cross.tar.gz | sudo tar xzC "/opt"
+	curl -Lks https://github.com/jaenek/MicrOS-DevTools/releases/download/v1.0/cross.tar.gz | sudo tar xzC "/opt"
 	if test $? -eq 1; then
 		echo "Error: wrong sudo password."
 		exit 1
