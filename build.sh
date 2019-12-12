@@ -71,7 +71,7 @@ copy() {
 if [ "$1" != "clean" ]; then
 	FLOPPY_IMG="$WORKSPACE_DIR/build/floppy.img"
 	# Remove old floppy img
-	rm "$FLOPPY_IMG"
+	rm -f "$FLOPPY_IMG"
 
 	# Make and format the floppy
 	mkfs.msdos -C "$FLOPPY_IMG" 1440
