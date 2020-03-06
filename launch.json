@@ -25,12 +25,20 @@
                     "ignoreFailures": true
                 },
                 {
-                    "text": "file [DEBUGGER_TARGET]",
+                    "text": "file ${workspaceRoot}${input:debuggerTarget}",
                     "description": "Load binary."
                 }
 
             ],
             "preLaunchTask": "Run QEMU with debugger"
+        }
+    ],
+    "inputs": [
+        {
+            "id": "debuggerTarget",
+            "type": "promptString",
+            "description": "What do you want to debug?",
+            "default": "/os/kernel/bin/kernel.elf"
         }
     ]
 }
