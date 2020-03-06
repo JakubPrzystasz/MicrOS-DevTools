@@ -4,7 +4,7 @@
         {
             "label": "Clean",
             "type": "shell",
-            "command": "[WORK_DIR]/scripts/build.sh clean",
+            "command": "${workspaceRoot}/scripts/build.sh clean",
             "group": {
                 "kind": "build",
                 "isDefault": true
@@ -14,7 +14,7 @@
         {
             "label": "Build",
             "type": "shell",
-            "command": "[WORK_DIR]/scripts/build.sh",
+            "command": "${workspaceRoot}/scripts/build.sh",
             "group": {
                 "kind": "build",
                 "isDefault": true
