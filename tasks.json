@@ -4,7 +4,7 @@
         {
             "label": "Clean",
             "type": "shell",
-            "command": "[WSL][WORK_DIR]/scripts/build.sh clean",
+            "command": "[WORK_DIR]/scripts/build.sh clean",
             "group": {
                 "kind": "build",
                 "isDefault": true
@@ -14,7 +14,7 @@
         {
             "label": "Build",
             "type": "shell",
-            "command": "[WSL][WORK_DIR]/scripts/build.sh",
+            "command": "[WORK_DIR]/scripts/build.sh",
             "group": {
                 "kind": "build",
                 "isDefault": true
@@ -24,28 +24,50 @@
         {
             "label": "Run QEMU",
             "type": "shell",
-            "command": "[QEMU_PATH]-m 640M -drive file=build/floppy.img,format=raw,if=floppy -soundhw pcspk",
+            "command": "cmd.exe /c \"[QEMU_PATH]\" -m 640M -drive file=build/floppy.img,format=raw,if=floppy -soundhw pcspk",
             "group": {
                 "kind": "build",
                 "isDefault": true
             },
+            "isBackground": true,
             "dependsOn": [
                 "Build"
             ],
-            "problemMatcher": []
+            "problemMatcher": {
+                "pattern": {
+                    "regexp": "^(Starting QEMU)",
+                    "line": 1
+                },
+                "background": {
+                    "activeOnStart": true,
+                    "beginsPattern": "^(Starting QEMU)",
+                    "endsPattern": "^(Starting QEMU)"
+                }
+            }
         },
         {
             "label": "Run QEMU with debugger",
             "type": "shell",
-            "command": "[QEMU_PATH]-m 640M -drive file=build/floppy.img,format=raw,if=floppy -S -s",
+            "command": "echo \"Starting QEMU\" & cmd.exe /c \"[QEMU_PATH]\" -m 640M -drive file=build/floppy.img,format=raw,if=floppy -S -s",
             "group": {
                 "kind": "build",
                 "isDefault": true
             },
+            "isBackground": true,
             "dependsOn": [
                 "Build"
             ],
-            "problemMatcher": []
+            "problemMatcher": {
+                "pattern": {
+                    "regexp": "^(Starting QEMU)",
+                    "line": 1
+                },
+                "background": {
+                    "activeOnStart": true,
+                    "beginsPattern": "^(Starting QEMU)",
+                    "endsPattern": "^(Starting QEMU)"
+                }
+            }
         }
     ]
 }

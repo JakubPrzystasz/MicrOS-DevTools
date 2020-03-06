@@ -6,11 +6,11 @@
             "type": "cppdbg",
             "request": "launch",
             "program": "${workspaceRoot}/build/floppy/KERNEL.BIN",
-            "cwd": " ${workspaceRoot}",
+            "cwd": "${workspaceRoot}",
             "args": [],
             "targetArchitecture": "x86",
             "MIMode": "gdb",
-            "miDebuggerPath": "gdb",
+            "miDebuggerPath": "/usr/bin/gdb",
             "miDebuggerArgs": "",
             "customLaunchSetupCommands": [
                 {
@@ -25,9 +25,10 @@
                     "ignoreFailures": true
                 },
                 {
-                    "text": "file ${workspaceRoot}[DEBUGGER_TARGET]",
+                    "text": "file [DEBUGGER_TARGET]",
                     "description": "Load binary."
                 }
+
             ],
             "preLaunchTask": "Run QEMU with debugger"
         }
