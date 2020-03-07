@@ -117,9 +117,9 @@ fi
 # Replace strings
 sed -i "s!\[THREADS_COUNT\]!$THREADS_COUNT!g" "$SRC/build.sh"
 if test $WSL -eq 1; then
-	sed -i "s!\[QEMU_PATH\][^\"]*!start -FilePath \'$QEMU_PATH\' -ArgumentList \'&\'!g;s!\[QEMU_PATH\]!!g" "$SRC/tasks.json"
+	sed -i "s!\[QEMU_PATH\]!cmd.exe /c \\\"$QEMU_PATH\\\"!g" "$SRC/tasks.json"
 else
-	sed -i "s!\[QEMU_PATH\]!$QEMU_PATH !g" "$SRC/tasks.json"
+	sed -i "s!\[QEMU_PATH\]!$QEMU_PATH!g" "$SRC/tasks.json"
 fi
 
 # Prepare workspace directory
