@@ -4,7 +4,7 @@
         {
             "label": "Clean",
             "type": "shell",
-            "command": "${workspaceRoot}/scripts/build.sh",
+            "command": "${workspaceFolder}/scripts/build.sh",
 			"args": [
 				"clean"
 			],
@@ -17,7 +17,7 @@
         {
             "label": "Build",
             "type": "shell",
-            "command": "${workspaceRoot}/scripts/build.sh",
+            "command": "${workspaceFolder}/scripts/build.sh",
             "group": {
                 "kind": "build",
                 "isDefault": true
@@ -27,7 +27,7 @@
         {
             "label": "Run QEMU",
             "type": "shell",
-            "command": "cmd.exe /c \"[QEMU_PATH]\"",
+            "command": "[QEMU_PATH]",
 			"args": [
 				"-m 640M",
 				"-drive file=build/floppy.img,format=raw,if=floppy",
@@ -56,7 +56,7 @@
         {
             "label": "Run QEMU with debugger",
             "type": "shell",
-            "command": "echo \"Starting QEMU\" & cmd.exe /c \"[QEMU_PATH]\"",
+            "command": "echo \"Starting QEMU\" & [QEMU_PATH]",
 			"args": [
 				"-m 640M",
 				"-drive file=build/floppy.img,format=raw,if=floppy",
