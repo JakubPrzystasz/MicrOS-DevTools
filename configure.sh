@@ -106,9 +106,9 @@ echo "DONE"
 # Download files
 echo "Downloading and uncompressing files..."
 TEMP="/tmp/MicrOS_DevTools_temp"
-SRC="$TEMP/MicrOS-DevTools-2.0"
+SRC="$TEMP/MicrOS-DevTools-2.1"
 mkdir -p "$TEMP"
-curl -Lks https://github.com/jaenek/MicrOS-DevTools/archive/v2.0.tar.gz | tar xzC "$TEMP"
+curl -Lks https://github.com/jaenek/MicrOS-DevTools/archive/v2.1.tar.gz | tar xzC "$TEMP"
 if test $SKIP_CC -eq 0;then
 	curl -Lks https://github.com/jaenek/MicrOS-DevTools/releases/download/v1.0/cross.tar.gz | sudo tar xzC "/opt"
 	if test $? -eq 1; then
