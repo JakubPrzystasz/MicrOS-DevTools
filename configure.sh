@@ -93,6 +93,7 @@ WSL=${WSL:-0}
 SKIP_CC=${SKIP_CC:-0}
 
 # Check for dependencies
+echo "Checking dependencies..."
 DEPS="nasm curl mcopy make"
 for i in $DEPS; do
 	if test -z "$(command -v $i)"; then
@@ -100,8 +101,10 @@ for i in $DEPS; do
 		exit 1
 	fi
 done
+echo "DONE"
 
 # Download files
+echo "Downloading and uncompressing files..."
 TEMP="/tmp/MicrOS_DevTools_temp"
 SRC="$TEMP/MicrOS-DevTools-2.0"
 mkdir -p "$TEMP"
@@ -113,16 +116,20 @@ if test $SKIP_CC -eq 0;then
 		exit 1
 	fi
 fi
+echo "DONE"
 
 # Replace strings
+echo "Replacing strings..."
 sed -i "s!\[THREADS_COUNT\]!$THREADS_COUNT!g" "$SRC/build.sh"
 if test $WSL -eq 1; then
 	sed -i "s!\[QEMU_PATH\]!cmd.exe /c \\\"$QEMU_PATH\\\"!g" "$SRC/tasks.json"
 else
 	sed -i "s!\[QEMU_PATH\]!$QEMU_PATH!g" "$SRC/tasks.json"
 fi
+echo "DONE"
 
 # Prepare workspace directory
+echo "Preparing workspace directory..."
 mkdir -p "$WORK_DIR/build/"
 mkdir -p "$WORK_DIR/scripts/"
 mv "$SRC/build.sh" "$WORK_DIR/scripts/"
@@ -133,6 +140,7 @@ mv "$SRC/tasks.json" "$WORK_DIR/.vscode/"
 # Create symlink to nasm
 mkdir -p "$WORK_DIR/tools/"
 ln -sf "$(command -v nasm)" "$WORK_DIR/tools/nasm"
+echo "DONE"
 
 # Remove temporary directory
 rm -r "$TEMP"
