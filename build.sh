@@ -2,7 +2,7 @@
 # Set threads count used during GCC compilation
 THREADS_COUNT=[THREADS_COUNT]
 WORKSPACE_DIR="$PWD"
-
+HDD_SIZE=[HDD_SIZE]
 
 # Delete old ELF and BIN files
 find build -iname "*.elf" -type f -delete
@@ -90,11 +90,11 @@ if [ "$1" != "clean" ]; then
 	mkdir -p "$WORKSPACE_DIR/build"
 	mkdir -p "$WORKSPACE_DIR/build/hdd"
 	HDD_IMG="$WORKSPACE_DIR/build/hdd.img"
-	# Remove old floppy img
+	# Remove old hdd img
 	rm -f "$HDD_IMG"
 
-	# Make and format the floppy
-	/sbin/mkfs.msdos -C "$HDD_IMG" 1440
+	# Make and format the hdd
+	/sbin/mkfs.msdos -C "$HDD_IMG" $HDD_SIZE
 
 	mcopy -i "$HDD_IMG" build/hdd ::
 fi

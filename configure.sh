@@ -130,7 +130,7 @@ fi
 
 # Replace strings
 echo "[Replacing strings]"
-sed -i "s!\[THREADS_COUNT\]!$THREADS_COUNT!g" "$TEMP/build.sh"
+sed -i "s!\[HDD_SIZE\]!$HDD_SIZE!g" "$TEMP/build.sh"
 if test $WSL -eq 1; then
 	sed -i "s!\[QEMU_PATH\]! \\\\\"/mnt/c/Windows/system32/cmd.exe\\\\\" /c  \\ \\\\\"$QEMU_PATH\\\\\"!g" "$TEMP/tasks.json"
 else
