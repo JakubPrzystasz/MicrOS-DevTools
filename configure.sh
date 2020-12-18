@@ -111,9 +111,10 @@ echo "[Done]"
 # Download files
 echo "[Downloading configuration files]"
 TEMP="/tmp/MicrOS_DevTools_temp"
-SRC="$TEMP/MicrOS-DevTools-2.1"
 mkdir -p "$TEMP"
-curl -Lks https://github.com/jaenek/MicrOS-DevTools/archive/v2.1.tar.gz | tar xzC "$TEMP"
+curl -Lks "https://raw.githubusercontent.com/JakubPrzystasz/MicrOS-DevTools/wsl2update/build.sh" >> "$TEMP/build.sh" 
+curl -Lks "https://raw.githubusercontent.com/JakubPrzystasz/MicrOS-DevTools/wsl2update/tasks.json" >> "$TEMP/tasks.json" 
+curl -Lks "https://raw.githubusercontent.com/JakubPrzystasz/MicrOS-DevTools/wsl2update/launch.json" >> "$TEMP/launch.json" 
 echo "[Done]"
 if [ $SKIP_CC -eq 0 ]; then
 	echo "[Downloading cross-compiler]"
@@ -128,11 +129,11 @@ fi
 
 # Replace strings
 echo "[Replacing strings]"
-sed -i "s!\[THREADS_COUNT\]!$THREADS_COUNT!g" "$SRC/build.sh"
+sed -i "s!\[THREADS_COUNT\]!$THREADS_COUNT!g" "$TEMP/build.sh"
 if test $WSL -eq 1; then
-	sed -i "s!\[QEMU_PATH\]! \\\\\"/mnt/c/Windows/system32/cmd.exe\\\\\" /c  \\ \\\\\"$QEMU_PATH\\\\\"!g" "$SRC/tasks.json"
+	sed -i "s!\[QEMU_PATH\]! \\\\\"/mnt/c/Windows/system32/cmd.exe\\\\\" /c  \\ \\\\\"$QEMU_PATH\\\\\"!g" "$TEMP/tasks.json"
 else
-	sed -i "s!\[QEMU_PATH\]!$QEMU_PATH!g" "$SRC/tasks.json"
+	sed -i "s!\[QEMU_PATH\]!$QEMU_PATH!g" "$TEMP/tasks.json"
 fi
 echo "[Done]"
 
@@ -140,10 +141,10 @@ echo "[Done]"
 echo "[Preparing workspace directory]"
 mkdir -p "$WORK_DIR/build/"
 mkdir -p "$WORK_DIR/scripts/"
-mv "$SRC/build.sh" "$WORK_DIR/scripts/"
+cp "$TEMP/build.sh" "$WORK_DIR/scripts/"
 mkdir -p "$WORK_DIR/.vscode/"
-mv "$SRC/launch.json" "$WORK_DIR/.vscode/"
-mv "$SRC/tasks.json" "$WORK_DIR/.vscode/"
+cp "$TEMP/launch.json" "$WORK_DIR/.vscode/"
+cp "$TEMP/tasks.json" "$WORK_DIR/.vscode/"
 echo "[Done]"
 
 # Create symlink to nasm
@@ -172,4 +173,6 @@ if [ $WSL_2 -eq 1 ]; then
 fi
 
 # Remove temporary directory
-rm -r "$TEMP"
+echo "[Cleaning up]"
+rm -rf "$TEMP"
+echo "[Done]"
