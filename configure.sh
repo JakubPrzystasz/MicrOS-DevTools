@@ -8,8 +8,9 @@ help() {
 	echo "-w, --workspace-dir    specify workspace directory"
 	echo "-t, --threads-count    threads count to use when compiling MicrOS"
 	echo "-q, --qemu-path        specify qemu path, needed for wsl environment"
+	echo "--hdd-size             size of MicrOS hdd image"
 	echo "--wsl                  indicate WSL configuration on Windows 10"
-	echo "-wsl2                  indicate to configure for WSL2"
+	echo "--wsl2                 indicate to configure for WSL2"
 	echo "-s, --skip-compiler    omit the cross compiler installation"
 	exit 0
 }
@@ -63,6 +64,18 @@ while test $# -gt 0; do
 			fi
 			shift
 			;;
+		--hdd-size)
+			shift
+			if test $# -gt 0; then
+				if printf %d "$1" >/dev/null 2>&1; then
+					HDD_SIZE=$1
+				else
+					echo "Error: Please specify integer hdd size"
+					exit 1
+				fi
+			fi
+			shift
+			;;
 		--wsl)
 			if test -n "$QEMU_PATH"; then
 				WSL=1
@@ -94,6 +107,7 @@ fi
 # Set default values if not defined
 THREADS_COUNT=${THREADS_COUNT:-1}
 QEMU_PATH=${QEMU_PATH:-"qemu-system-i386"}
+HDD_SIZE=${HDD_SIZE:-1440}
 WSL=${WSL:-0}
 WSL_2=${WSL_2:-0}
 SKIP_CC=${SKIP_CC:-0}
@@ -113,9 +127,7 @@ echo "[Done]"
 echo "[Downloading configuration files]"
 TEMP="/tmp/MicrOS_DevTools_temp"
 mkdir -p "$TEMP"
-curl -Lks "https://raw.githubusercontent.com/JakubPrzystasz/MicrOS-DevTools/wsl2update/build.sh" >> "$TEMP/build.sh" 
-curl -Lks "https://raw.githubusercontent.com/JakubPrzystasz/MicrOS-DevTools/wsl2update/tasks.json" >> "$TEMP/tasks.json" 
-curl -Lks "https://raw.githubusercontent.com/JakubPrzystasz/MicrOS-DevTools/wsl2update/launch.json" >> "$TEMP/launch.json" 
+curl -Lks https://github.com/jaenek/MicrOS-DevTools/master.zip | tar xzC "$TEMP"
 echo "[Done]"
 if [ $SKIP_CC -eq 0 ]; then
 	echo "[Downloading cross compiler]"
@@ -130,6 +142,7 @@ fi
 
 # Replace strings
 echo "[Replacing strings]"
+sed -i "s!\[THREADS_COUNT\]!$THREADS_COUNT!g" "$TEMP/build.sh"
 sed -i "s!\[HDD_SIZE\]!$HDD_SIZE!g" "$TEMP/build.sh"
 if test $WSL -eq 1; then
 	sed -i "s!\[QEMU_PATH\]! \\\\\"/mnt/c/Windows/system32/cmd.exe\\\\\" /c  \\ \\\\\"$QEMU_PATH\\\\\"!g" "$TEMP/tasks.json"
