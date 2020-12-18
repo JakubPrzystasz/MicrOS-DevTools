@@ -1,14 +1,15 @@
 #!/bin/bash
 
 help() {
-	echo "configure.sh - configure the MicrOS development envirionment"
+	echo "configure.sh - configure the MicrOS development environment"
 	echo " "
 	echo "$ configure.sh [options]"
 	echo "-h, --help             show this help"
 	echo "-w, --workspace-dir    specify workspace directory"
 	echo "-t, --threads-count    threads count to use when compiling MicrOS"
 	echo "-q, --qemu-path        specify qemu path, needed for wsl environment"
-	echo "--wsl                  indicate wsl configuration on Windows 10"
+	echo "--wsl                  indicate WSL configuration on Windows 10"
+	echo "-wsl2                  indicate to configure for WSL2"
 	echo "-s, --skip-compiler    omit the cross compiler installation"
 	exit 0
 }
@@ -117,7 +118,7 @@ curl -Lks "https://raw.githubusercontent.com/JakubPrzystasz/MicrOS-DevTools/wsl2
 curl -Lks "https://raw.githubusercontent.com/JakubPrzystasz/MicrOS-DevTools/wsl2update/launch.json" >> "$TEMP/launch.json" 
 echo "[Done]"
 if [ $SKIP_CC -eq 0 ]; then
-	echo "[Downloading cross-compiler]"
+	echo "[Downloading cross compiler]"
 	echo "!!!Warning!!! This operation can take a while, do not close this window"
 	curl -Lks https://github.com/jaenek/MicrOS-DevTools/releases/download/v1.0/cross.tar.gz | sudo tar xzC "/opt"
 	if test $? -eq 1; then
