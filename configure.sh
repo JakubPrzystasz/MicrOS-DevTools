@@ -127,7 +127,7 @@ echo "[Done]"
 echo "[Downloading configuration files]"
 TEMP="/tmp/MicrOS_DevTools_temp"
 mkdir -p "$TEMP"
-curl -Lks https://github.com/jaenek/MicrOS-DevTools/master.zip | tar xzC "$TEMP"
+curl -Lks https://github.com/jaenek/MicrOS-DevTools/master.tar.gz | tar xzC "$TEMP"
 echo "[Done]"
 if [ $SKIP_CC -eq 0 ]; then
 	echo "[Downloading cross compiler]"
