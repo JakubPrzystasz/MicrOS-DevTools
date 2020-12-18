@@ -71,6 +71,10 @@ while test $# -gt 0; do
 				exit 1
 			fi
 			;;
+		-wsl2)
+			WSL_2=1
+			shift
+			;;
 		-s|--skip-compiler)
 			SKIP_CC=1
 			shift
@@ -90,57 +94,82 @@ fi
 THREADS_COUNT=${THREADS_COUNT:-1}
 QEMU_PATH=${QEMU_PATH:-"qemu-system-i386"}
 WSL=${WSL:-0}
+WSL_2=${WSL_2:-0}
 SKIP_CC=${SKIP_CC:-0}
 
 # Check for dependencies
-echo "Checking dependencies..."
-DEPS="nasm curl mcopy make"
+echo "[Checking dependencies]"
+DEPS="nasm curl mcopy make mtools"
 for i in $DEPS; do
 	if test -z "$(command -v $i)"; then
 		echo "Error: dependecies not met, $i is not installed."
 		exit 1
 	fi
 done
-echo "DONE"
+echo "[Done]"
 
 # Download files
-echo "Downloading and uncompressing files..."
+echo "[Downloading configuration files]"
 TEMP="/tmp/MicrOS_DevTools_temp"
 SRC="$TEMP/MicrOS-DevTools-2.1"
 mkdir -p "$TEMP"
 curl -Lks https://github.com/jaenek/MicrOS-DevTools/archive/v2.1.tar.gz | tar xzC "$TEMP"
-if test $SKIP_CC -eq 0;then
+echo "[Done]"
+if [ $SKIP_CC -eq 0 ]; then
+	echo "[Downloading cross-compiler]"
+	echo "!!!Warning!!! This operation can take a while, do not close this window"
 	curl -Lks https://github.com/jaenek/MicrOS-DevTools/releases/download/v1.0/cross.tar.gz | sudo tar xzC "/opt"
 	if test $? -eq 1; then
 		echo "Error: wrong sudo password."
 		exit 1
 	fi
+	echo "[Done]"
 fi
-echo "DONE"
 
 # Replace strings
-echo "Replacing strings..."
+echo "[Replacing strings]"
 sed -i "s!\[THREADS_COUNT\]!$THREADS_COUNT!g" "$SRC/build.sh"
 if test $WSL -eq 1; then
-	sed -i "s!\[QEMU_PATH\]!cmd.exe /c \\\"$QEMU_PATH\\\"!g" "$SRC/tasks.json"
+	sed -i "s!\[QEMU_PATH\]! \\\\\"/mnt/c/Windows/system32/cmd.exe\\\\\" /c  \\ \\\\\"$QEMU_PATH\\\\\"!g" "$SRC/tasks.json"
 else
 	sed -i "s!\[QEMU_PATH\]!$QEMU_PATH!g" "$SRC/tasks.json"
 fi
-echo "DONE"
+echo "[Done]"
 
 # Prepare workspace directory
-echo "Preparing workspace directory..."
+echo "[Preparing workspace directory]"
 mkdir -p "$WORK_DIR/build/"
 mkdir -p "$WORK_DIR/scripts/"
 mv "$SRC/build.sh" "$WORK_DIR/scripts/"
 mkdir -p "$WORK_DIR/.vscode/"
 mv "$SRC/launch.json" "$WORK_DIR/.vscode/"
 mv "$SRC/tasks.json" "$WORK_DIR/.vscode/"
+echo "[Done]"
 
 # Create symlink to nasm
+echo "[Creating symlink to nasm]"
 mkdir -p "$WORK_DIR/tools/"
 ln -sf "$(command -v nasm)" "$WORK_DIR/tools/nasm"
-echo "DONE"
+echo "[Done]"
+
+# Configure WSL2
+if [ $WSL_2 -eq 1 ]; then
+	#backup /etc/hosts
+	echo "[Configuring /etc/hosts]"
+	sudo cp /etc/hosts /etc/hosts.bak
+	nameserver=$(grep -m 1 nameserver /etc/resolv.conf | awk '{print $2}')   # find nameserver
+	[ -n "$nameserver" ] || "unable to find nameserver" || exit 1            # exit immediately if nameserver was not found
+	echo "# nameserver found: '$nameserver'"
+	localhost_entry=$(grep -v "127.0.0.1" /etc/hosts | grep "\slocalhost$")  # find localhost entry excluding 127.0.0.1
+	if [ -n "$localhost_entry" ]; then                                       # if localhost entry was found
+		echo "# localhost entry found: '$localhost_entry'"
+		sudo sed -i "s/$localhost_entry/$nameserver localhost/g" /etc/hosts       # then update localhost entry with the new $nameserver
+	else                                                                     # else if entry was not found
+		echo "# localhost entry not found"
+		echo "$nameserver localhost" | sudo tee -a /etc/hosts                    # then append $nameserver mapping to localhost
+	fi
+	echo "[Done]"
+fi
 
 # Remove temporary directory
 rm -r "$TEMP"

@@ -27,7 +27,7 @@
         {
             "label": "Run QEMU",
             "type": "shell",
-            "command": "echo \"Starting QEMU\" & [QEMU_PATH] -m 640M -drive file=build/floppy.img,format=raw,if=floppy -soundhw pcspk",
+            "command": "echo \"Starting QEMU\" & [QEMU_PATH] -m 640M -drive file=build/floppy.img,format=raw,if=floppy -drive file=build/hdd.img,format=raw -boot a -soundhw pcspk",
             "group": {
                 "kind": "build",
                 "isDefault": true
@@ -51,7 +51,7 @@
         {
             "label": "Run QEMU with debugger",
             "type": "shell",
-            "command": "echo \"Starting QEMU\" & [QEMU_PATH] -m 640M -drive file=build/floppy.img,format=raw,if=floppy -S -s",
+            "command": "echo \"Starting QEMU\" & [QEMU_PATH] -m 640M -drive file=build/floppy.img,format=raw,if=floppy -drive file=build/hdd.img,format=raw -boot a -S -s",
             "group": {
                 "kind": "build",
                 "isDefault": true

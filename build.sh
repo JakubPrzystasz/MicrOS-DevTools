@@ -74,7 +74,7 @@ if [ "$1" != "clean" ]; then
 	rm -f "$FLOPPY_IMG"
 
 	# Make and format the floppy
-	mkfs.msdos -C "$FLOPPY_IMG" 1440
+	/sbin/mkfs.msdos -C "$FLOPPY_IMG" 1440
 
 	# Upload bootloader to the floppy
 	dd if=os/bootloader/bin/bootloader.bin of="$FLOPPY_IMG" bs=512 conv=notrunc
@@ -82,4 +82,16 @@ if [ "$1" != "clean" ]; then
 	# Copy kernel to the floppy
 	copy build/floppy
 	copy resources
+fi
+
+# Create hdd
+if [ "$1" != "clean" ]; then
+	HDD_IMG="$WORKSPACE_DIR/build/hdd.img"
+	# Remove old floppy img
+	rm -f "$HDD_IMG"
+
+	# Make and format the floppy
+	/sbin/mkfs.msdos -C "$HDD_IMG" 1440
+
+	mcopy -i "image.img" build/hdd ::
 fi
