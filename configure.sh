@@ -72,7 +72,7 @@ while test $# -gt 0; do
 				exit 1
 			fi
 			;;
-		-wsl2)
+		--wsl2)
 			WSL_2=1
 			shift
 			;;
