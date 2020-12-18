@@ -3,6 +3,7 @@
 THREADS_COUNT=[THREADS_COUNT]
 WORKSPACE_DIR="$PWD"
 
+
 # Delete old ELF and BIN files
 find build -iname "*.elf" -type f -delete
 find build -iname "*.bin" -type f -delete
@@ -86,6 +87,8 @@ fi
 
 # Create hdd
 if [ "$1" != "clean" ]; then
+	mkdir -p "$WORKSPACE_DIR/build"
+	mkdir -p "$WORKSPACE_DIR/build/hdd"
 	HDD_IMG="$WORKSPACE_DIR/build/hdd.img"
 	# Remove old floppy img
 	rm -f "$HDD_IMG"
