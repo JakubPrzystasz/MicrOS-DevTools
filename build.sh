@@ -93,5 +93,5 @@ if [ "$1" != "clean" ]; then
 	# Make and format the floppy
 	/sbin/mkfs.msdos -C "$HDD_IMG" 1440
 
-	mcopy -i "image.img" build/hdd ::
+	mcopy -i "$HDD_IMG" build/hdd ::
 fi
