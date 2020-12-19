@@ -11,6 +11,7 @@ help() {
 	echo "--hdd-size             size of MicrOS hdd image"
 	echo "--wsl                  indicate WSL configuration on Windows 10"
 	echo "--wsl2                 indicate to configure for WSL2"
+	echo "--ne                   indicate to use native emulator from WSL"
 	echo "-s, --skip-compiler    omit the cross compiler installation"
 	exit 0
 }
@@ -89,6 +90,10 @@ while test $# -gt 0; do
 			WSL_2=1
 			shift
 			;;
+		--ne)
+			NE=1
+			shift
+			;;
 		-s|--skip-compiler)
 			SKIP_CC=1
 			shift
@@ -110,6 +115,7 @@ QEMU_PATH=${QEMU_PATH:-"qemu-system-i386"}
 HDD_SIZE=${HDD_SIZE:-1440}
 WSL=${WSL:-0}
 WSL_2=${WSL_2:-0}
+NE=${NE:-0}
 SKIP_CC=${SKIP_CC:-0}
 
 # Check for dependencies
@@ -125,9 +131,8 @@ echo "[Done]"
 
 # Download files
 echo "[Downloading configuration files]"
-TEMP="/tmp/MicrOS_DevTools_temp"
-mkdir -p "$TEMP"
-curl -Lks https://github.com/jaenek/MicrOS-DevTools/master.zip | tar xzC "$TEMP"
+TEMP="/tmp/MicrOS-DevTools-master"
+curl -Lks https://github.com/jaenek/MicrOS-DevTools/archive/master.tar.gz | tar xzC /tmp
 echo "[Done]"
 if [ $SKIP_CC -eq 0 ]; then
 	echo "[Downloading cross compiler]"
@@ -146,6 +151,8 @@ sed -i "s!\[THREADS_COUNT\]!$THREADS_COUNT!g" "$TEMP/build.sh"
 sed -i "s!\[HDD_SIZE\]!$HDD_SIZE!g" "$TEMP/build.sh"
 if test $WSL -eq 1; then
 	sed -i "s!\[QEMU_PATH\]! \\\\\"/mnt/c/Windows/system32/cmd.exe\\\\\" /c  \\ \\\\\"$QEMU_PATH\\\\\"!g" "$TEMP/tasks.json"
+elif test $NE -eq 1; then
+	sed -i "s!\[QEMU_PATH\]! export DISPLAY=:0 | $QEMU_PATH!g" "$TEMP/tasks.json"
 else
 	sed -i "s!\[QEMU_PATH\]!$QEMU_PATH!g" "$TEMP/tasks.json"
 fi
