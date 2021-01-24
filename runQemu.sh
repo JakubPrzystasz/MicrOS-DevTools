@@ -19,7 +19,7 @@ while test $# -gt 0; do
 done
 
 if [ $DEBUG -eq 1 ]; then
-qemu-system-i386 -m 640M\
+[QEMU_PATH] -m 640M\
  -monitor stdio \
  -drive file=build/floppy.img,format=raw,if=floppy\
  -drive file=build/hdd.img,format=raw -boot a -S -s\
@@ -30,7 +30,7 @@ fi
 
 
 if [ $RUN -eq 1 ]; then
-qemu-system-i386 -m 640M\
+[QEMU_PATH] -m 640M\
  -drive file=build/floppy.img,format=raw,if=floppy\
  -drive file=build/hdd.img,format=raw -boot a -soundhw pcspk\
  -netdev user,id=u1,hostfwd=tcp::5555-:22\
