@@ -150,11 +150,11 @@ echo "[Replacing strings]"
 sed -i "s!\[THREADS_COUNT\]!$THREADS_COUNT!g" "$TEMP/build.sh"
 sed -i "s!\[HDD_SIZE\]!$HDD_SIZE!g" "$TEMP/build.sh"
 if test $WSL -eq 1; then
-	sed -i "s!\[QEMU_PATH\]! \\\\\"/mnt/c/Windows/system32/cmd.exe\\\\\" /c  \\ \\\\\"$QEMU_PATH\\\\\"!g" "$TEMP/tasks.json"
+	sed -i "s!\[QEMU_PATH\]! \\\\\"/mnt/c/Windows/system32/cmd.exe\\\\\" /c  \\ \\\\\"$QEMU_PATH\\\\\"!g" "$TEMP/runQemu.sh"
 elif test $NE -eq 1; then
-	sed -i "s!\[QEMU_PATH\]! export DISPLAY=:0 | $QEMU_PATH!g" "$TEMP/tasks.json"
+	sed -i "s!\[QEMU_PATH\]! export DISPLAY=:0 | $QEMU_PATH!g" "$TEMP/runQemu.sh"
 else
-	sed -i "s!\[QEMU_PATH\]!$QEMU_PATH!g" "$TEMP/tasks.json"
+	sed -i "s!\[QEMU_PATH\]!$QEMU_PATH!g" "$TEMP/runQemu.sh"
 fi
 echo "[Done]"
 
@@ -163,8 +163,11 @@ echo "[Preparing workspace directory]"
 mkdir -p "$WORK_DIR/build/"
 mkdir -p "$WORK_DIR/scripts/"
 cp "$TEMP/build.sh" "$WORK_DIR/scripts/"
+cp "$TEMP/runQemu.sh" "$WORK_DIR/scripts/"
+cp "$TEMP/findBinaries.sh" "$WORK_DIR/scripts/"
 mkdir -p "$WORK_DIR/.vscode/"
 cp "$TEMP/launch.json" "$WORK_DIR/.vscode/"
+cp "$TEMP/launch.json" "$WORK_DIR/scripts/"
 cp "$TEMP/tasks.json" "$WORK_DIR/.vscode/"
 echo "[Done]"
 

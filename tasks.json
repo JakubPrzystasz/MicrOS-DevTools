@@ -1,13 +1,23 @@
 {
-    "version": "2.0.0",
+    "version": "2.1.0",
     "tasks": [
         {
             "label": "Clean",
             "type": "shell",
             "command": "${workspaceFolder}/scripts/build.sh",
-			"args": [
-				"clean"
-			],
+            "args": [
+                "clean"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "Look for binary files",
+            "type": "shell",
+            "command": "${workspaceFolder}/scripts/findBinaries.sh",
             "group": {
                 "kind": "build",
                 "isDefault": true
@@ -27,7 +37,7 @@
         {
             "label": "Run QEMU",
             "type": "shell",
-            "command": "echo \"Starting QEMU\" & [QEMU_PATH] -m 640M -drive file=build/floppy.img,format=raw,if=floppy -drive file=build/hdd.img,format=raw -boot a -soundhw pcspk",
+            "command": "echo \"Starting QEMU\" & ${workspaceFolder}/scripts/runQemu.sh -run",
             "group": {
                 "kind": "build",
                 "isDefault": true
@@ -51,7 +61,7 @@
         {
             "label": "Run QEMU with debugger",
             "type": "shell",
-            "command": "echo \"Starting QEMU\" & [QEMU_PATH] -m 640M -drive file=build/floppy.img,format=raw,if=floppy -drive file=build/hdd.img,format=raw -boot a -S -s",
+            "command": "echo \"Starting QEMU\" & ${workspaceFolder}/scripts/runQemu.sh -debug",
             "group": {
                 "kind": "build",
                 "isDefault": true

@@ -1,5 +1,5 @@
 {
-    "version": "0.2.0",
+    "version": "2.1.0",
     "configurations": [
         {
             "name": "Launch with GDB",
@@ -28,7 +28,6 @@
                     "text": "file ${workspaceFolder}${input:debuggerTarget}",
                     "description": "Load binary."
                 }
-
             ],
             "preLaunchTask": "Run QEMU with debugger"
         }
@@ -36,8 +35,9 @@
     "inputs": [
         {
             "id": "debuggerTarget",
-            "type": "promptString",
+            "type": "pickString",
             "description": "What do you want to debug?",
+            "options":[ [DEBUG_PATHS] ],
             "default": "/os/kernel/bin/kernel.elf"
         }
     ]
